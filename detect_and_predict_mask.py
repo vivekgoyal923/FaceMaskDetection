@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 
 
-def detect_and_predict_mask(frame, faceNet, maskNet):
+def detect_and_predict_mask(frame, faceNet, maskNet, resNet):
     # grab the dimensions of the frame and then construct a blob
     # from it
     (h, w) = frame.shape[:2]
@@ -18,6 +18,7 @@ def detect_and_predict_mask(frame, faceNet, maskNet):
     faces = []
     locs = []
     preds = []
+    scores = []
     # loop over the detections
     for i in range(0, detections.shape[2]):
         # extract the confidence (i.e., probability) associated with
@@ -47,11 +48,9 @@ def detect_and_predict_mask(frame, faceNet, maskNet):
             locs.append((startX, startY, endX, endY))
     # only make a predictions if at least one face was detected
     if len(faces) > 0:
-        # for faster inference we'll make batch predictions on *all*
-        # faces at the same time rather than one-by-one predictions
-        # in the above `for` loop
         faces = np.array(faces, dtype="float32")
         preds = maskNet.predict(faces, batch_size=32)
+        scores = resNet.predict(faces)
     # return a 2-tuple of the face locations and their corresponding
     # locations
-    return (locs, preds)
+    return (locs, preds, scores)
