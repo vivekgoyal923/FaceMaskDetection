@@ -26,12 +26,12 @@ def detect_mask():
                     pooling='avg')
     # initialize the video stream and allow the camera sensor to warm up
     print("[INFO] starting video stream...")
-    #vs = VideoStream(src=0).start()
-    #time.sleep(2.0)
+    vs = VideoStream(src=0).start()
+    time.sleep(2.0)
     #vs = cv2.VideoCapture('model/Mask_Video.mp4')
-    frame = cv2.imread("model/test_image1.jpg")
+    #frame = cv2.imread("model/test_image1.jpg")
     while True:
-        #frame = vs.read()
+        frame = vs.read()
         frame = imutils.resize(frame, width=400)
         (locs, preds, scores) = dpm.detect_and_predict_mask(frame, faceNet, maskNet, resNet)
         for (box, pred, score) in zip(locs, preds, scores):
@@ -67,13 +67,13 @@ def detect_mask():
                                 if temp < time_dif:
                                     time_dif = temp
                         print(old_time, new_time)
-                        if 50 < time_dif < 100:
+                        if 500 < time_dif < 1000:
                             print("Update on Dashboard")
                             if os.path.exists(f"DetectedFaces/{name} {old_time} {count}.jpg"):
                                 os.remove(f"DetectedFaces/{name} {old_time} {count}.jpg")
                             count += 1
                             cv2.imwrite(f"DetectedFaces/{name} {new_time.strftime('%y%m%d%H%M%S')} {count}.jpg", croppedImage)
-                        elif time_dif > 100:
+                        elif time_dif > 1000:
                             print("New Image Uploaded in Detected Folder")
                             if os.path.exists(f"DetectedFaces/{name} {old_time} {count}.jpg"):
                                 os.remove(f"DetectedFaces/{name} {old_time} {count}.jpg")
@@ -83,7 +83,8 @@ def detect_mask():
                         break
                 if flag == 0:
                     new_name = input("Please Enter the name for new Face:")
-                    cv2.imwrite(f"TestImage/{new_name}.jpg", frame)
+                    if new_name != "ignore":
+                        cv2.imwrite(f"TestImage/{new_name}.jpg", frame)
         cv2.imshow("Frames", frame)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
