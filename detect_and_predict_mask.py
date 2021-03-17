@@ -8,8 +8,7 @@ def detect_and_predict_mask(frame, faceNet, maskNet, resNet):
     # grab the dimensions of the frame and then construct a blob
     # from it
     (h, w) = frame.shape[:2]
-    blob = cv2.dnn.blobFromImage(frame, 1.0, (300, 300),
-        (104.0, 177.0, 123.0))
+    blob = cv2.dnn.blobFromImage(frame, 1.0, (300, 300), (104.0, 177.0, 123.0))
     # pass the blob through the network and obtain the face detections
     faceNet.setInput(blob)
     detections = faceNet.forward()
